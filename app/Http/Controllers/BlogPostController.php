@@ -24,7 +24,7 @@ class BlogPostController extends Controller
     //  Now passing BOTH posts and categories
     public function index()
     {
-        $posts = BlogPost::with('category')->latest()->paginate(12);
+        $posts = BlogPost::with('category')->latest()->paginate(5);
         $categories = Category::orderBy('name')->get();
 
         return view('blog_posts.index', compact('posts', 'categories'));

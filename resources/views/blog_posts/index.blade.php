@@ -20,6 +20,16 @@
             </div>
         @endif
 
+        <!-- Results Info -->
+        @if ($posts->total() > 0)
+            <div class="mb-4">
+                <p class="text-muted">
+                    Showing <strong>{{ $posts->firstItem() }}</strong> to <strong>{{ $posts->lastItem() }}</strong>
+                    of <strong>{{ $posts->total() }}</strong> posts
+                </p>
+            </div>
+        @endif
+
         <!-- Blog Cards Grid -->
         <div class="row g-4">
             @forelse($posts as $post)
@@ -44,7 +54,7 @@
                                 <p class="card-text text-muted small mb-3">{{ Str::limit($post->secondary_title, 80) }}</p>
                             @endif
                             @if ($post->category)
-                                <span class="badge bg-success bg-opacity-20  small mb-2">
+                                <span class="badge bg-success bg-opacity-20 small mb-2">
                                     {{ $post->category->name }}
                                 </span>
                             @endif
@@ -97,10 +107,64 @@
             @endforelse
         </div>
 
-        <!-- Pagination -->
-        <div class="mt-5 d-flex justify-content-center">
-            {{ $posts->links() }}
-        </div>
+        <!-- Enhanced Pagination -->
+        @if ($posts->hasPages())
+            <div class="mt-5">
+                <nav aria-label="Blog posts pagination">
+                    <ul class="pagination pagination-modern justify-content-center">
+                        {{-- Previous Button --}}
+                        @if ($posts->onFirstPage())
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="bi bi-chevron-left"></i>
+                                </span>
+                            </li>
+                        @else
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $posts->previousPageUrl() }}" rel="prev">
+                                    <i class="bi bi-chevron-left"></i>
+                                </a>
+                            </li>
+                        @endif
+
+                        {{-- Page Numbers --}}
+                        @foreach ($posts->getUrlRange(1, $posts->lastPage()) as $page => $url)
+                            @if ($page == $posts->currentPage())
+                                <li class="page-item active" aria-current="page">
+                                    <span class="page-link">{{ $page }}</span>
+                                </li>
+                            @else
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ $url }}">{{ $page }}</a>
+                                </li>
+                            @endif
+                        @endforeach
+
+                        {{-- Next Button --}}
+                        @if ($posts->hasMorePages())
+                            <li class="page-item">
+                                <a class="page-link" href="{{ $posts->nextPageUrl() }}" rel="next">
+                                    <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                        @else
+                            <li class="page-item disabled">
+                                <span class="page-link">
+                                    <i class="bi bi-chevron-right"></i>
+                                </span>
+                            </li>
+                        @endif
+                    </ul>
+                </nav>
+
+                {{-- Page Info --}}
+                <div class="text-center mt-3">
+                    <small class="text-muted">
+                        Page {{ $posts->currentPage() }} of {{ $posts->lastPage() }}
+                    </small>
+                </div>
+            </div>
+        @endif
     </div>
 
     <style>
@@ -120,6 +184,57 @@
 
         .card-img-top {
             border-radius: 0;
+        }
+
+        /* Enhanced Pagination Styles */
+        .pagination-modern {
+            gap: 8px;
+        }
+
+        .pagination-modern .page-link {
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            color: #495057;
+            font-weight: 500;
+            padding: 10px 16px;
+            transition: all 0.3s ease;
+            min-width: 45px;
+            text-align: center;
+        }
+
+        .pagination-modern .page-link:hover {
+            background-color: #f8f9fa;
+            border-color: #0d6efd;
+            color: #0d6efd;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(13, 110, 253, 0.15);
+        }
+
+        .pagination-modern .page-item.active .page-link {
+            background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+            border-color: #0d6efd;
+            color: white;
+            box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+            transform: scale(1.05);
+        }
+
+        .pagination-modern .page-item.disabled .page-link {
+            background-color: #f8f9fa;
+            border-color: #e9ecef;
+            color: #adb5bd;
+            cursor: not-allowed;
+        }
+
+        .pagination-modern .page-link i {
+            font-size: 0.9rem;
+            vertical-align: middle;
+        }
+
+        /* Smooth scroll to top on page change */
+        @media (prefers-reduced-motion: no-preference) {
+            html {
+                scroll-behavior: smooth;
+            }
         }
     </style>
 @endsection
