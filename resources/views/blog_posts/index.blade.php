@@ -36,7 +36,9 @@
                 <div class="col-lg-4 col-md-6">
                     <div class="card h-100 shadow-sm border-0 hover-lift">
                         <!-- Image -->
-                        @if ($post->image)
+                        <img src="{{ $post->image ? asset('storage/' . $post->image) : asset('storage/window.jpg') }}"
+                            class="card-img-top" alt="{{ $post->main_title }}" style="height: 250px; object-fit: cover;">
+                        {{-- @if ($post->image)
                             <img src="{{ asset('storage/' . $post->image) }}" class="card-img-top"
                                 alt="{{ $post->main_title }}" style="height: 250px; object-fit: cover;">
                         @else
@@ -44,7 +46,7 @@
                                 style="height: 250px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
                                 <i class="bi bi-image text-white" style="font-size: 4rem; opacity: 0.5;"></i>
                             </div>
-                        @endif
+                        @endif --}}
 
                         <div class="card-body d-flex flex-column">
                             <!-- Title -->
@@ -83,7 +85,7 @@
                                     <i class="bi bi-pencil"></i>
                                 </a>
                                 <form action="{{ route('blog-posts.destroy', $post) }}" method="POST" class="m-0"
-                                    onsubmit="return confirm('Are you sure you want to delete this post?')">
+                                    onsubmit="return confirm('Are you sure you want to delete this posts?')">
                                     @csrf @method('DELETE')
                                     <button type="submit" class="btn btn-outline-danger btn-sm">
                                         <i class="bi bi-trash"></i>
